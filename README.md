@@ -15,7 +15,6 @@ JSKOS Server implements the JSKOS API web service and storage for [JSKOS] data s
 - [Install](#install)
   - [Requirements](#requirements)
   - [Docker](#docker)
-  - [Clone and Install](#clone-and-install)
   - [Configuration](#configuration)
   - [Access control](#access-control)
   - [Authentication](#authentication)
@@ -97,14 +96,7 @@ rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] });
 If the replica set is initialized, JSKOS Server will detect it at startup (the `replSetGetStatus` command is retried up to `changesApi.rsMaxRetries` times). If Change Streams [are configured](change-streams-configuration) but no replica set was detected, JSKOS Server will log an error during startup but continue running with Change Streams disabled.
 
 ### Docker
-The easiest way to install and use JSKOS Server as stand-alone application is with Docker and Docker Compose. Please refer to [our Docker documentation](https://github.com/gbv/jskos-server/blob/master/docker/README.md) for more information and instructions.
-
-### Clone and Install
-```bash
-git clone https://github.com/gbv/jskos-server.git
-cd jskos-server
-npm ci
-```
+The easiest way to install and use JSKOS Server as stand-alone application is with Docker and Docker Compose. Please refer to [our Docker documentation](docker/README.md) for more information and instructions.
 
 ### Configuration
 You can customize the application settings via a configuration file. By default, this configuration file resides in `config/config.json`. However, it is possible to adjust this path via the `CONFIG_FILE` environment variable. Note that the given path has to be either absolute (i.e. starting with `/`) or relative to the `config/` folder (i.e. it defaults to `./config.json`). **Note** that the path to the configuration file needs to be valid and writable because a `namespace` key will be generated and written to the file if it doesn't currently exist. **Note** that if the file exists and contains invalid JSON data, JSKOS Server will refuse to start.
