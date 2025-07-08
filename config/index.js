@@ -20,7 +20,7 @@ function getDirname(url) {
 const __dirname = getDirname(import.meta.url)
 
 // Get package.json
-export const info = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json")))
+const info = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json")))
 
 // Adjust path if it's relative
 let configFilePath

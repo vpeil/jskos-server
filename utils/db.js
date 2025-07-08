@@ -1,6 +1,5 @@
-import config, { info } from "../config/index.js"
+import config from "../config/index.js"
 import { getUpgrades } from "../utils/version.js"
-const version = info.version
 import mongoose from "mongoose"
 const connection = mongoose.connection
 import { Meta } from "../models/meta.js"
@@ -58,7 +57,7 @@ export async function connect(retry = false) {
     collections = (await connection.db.listCollections().toArray()).map(c => c.name)
     if (!collections.length) {
       // no collections = first launch of jskos-server
-      meta = new Meta({ version })
+      meta = new Meta({ version: config.serverVersion })
       await meta.save()
     } else if (!collections.includes("meta")) {
       // meta does not exist = upgrade from <= 1.1.9
