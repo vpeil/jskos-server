@@ -1,7 +1,7 @@
 import assert from "node:assert"
 import mongoose from "mongoose"
 import { MongoMemoryServer, MongoMemoryReplSet } from "mongodb-memory-server"
-import { byType as services } from "../services/index.js"
+import { services } from "../services/index.js"
 
 
 let mongod
@@ -55,10 +55,10 @@ export async function dropDatabase() {
     await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error("Timeout waiting for DB connection")), 5000)
       conn.once("connected", () => {
-        clearTimeout(timeout); resolve() 
+        clearTimeout(timeout); resolve()
       })
       conn.once("error", (err) => {
-        clearTimeout(timeout); reject(err) 
+        clearTimeout(timeout); reject(err)
       })
     })
   }
@@ -81,10 +81,10 @@ export async function dropDatabase() {
  */
 export function dropDatabaseBeforeAndAfter() {
   before(async () => {
-    await dropDatabase() 
+    await dropDatabase()
   })
   after(async ()  => {
-    await dropDatabase() 
+    await dropDatabase()
   })
 }
 

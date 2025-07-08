@@ -6,24 +6,24 @@ import { teardownInMemoryMongo, setupInMemoryMongo, createCollectionsAndIndexes,
 
 import { InvalidBodyError } from "../errors/index.js"
 
-import { byType as services } from "../services/index.js"
+import { services } from "../services/index.js"
 
 describe("Services Features", () => {
   before(async () => {
     const mongoUri = await setupInMemoryMongo({ replSet: false })
-    process.env.MONGO_URI = mongoUri  
+    process.env.MONGO_URI = mongoUri
     await createCollectionsAndIndexes()
     await assertIndexes()
   })
-        
+
   after(async () => {
     // close server if you started one
     await teardownInMemoryMongo()
   })
-        
+
   // 🗑 Drop DB before *and* after every single `it()` in this file
   dropDatabaseBeforeAndAfter()
-        
+
   // 🔌 Sanity‐check that mongoose really is connected
   assertMongoDB()
 

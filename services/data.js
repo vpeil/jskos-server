@@ -1,5 +1,5 @@
 import { adjust } from "../utils/index.js"
-import { byType as models } from "../models/index.js"
+import { models } from "../models/index.js"
 
 export class DataService {
   async getData(req) {

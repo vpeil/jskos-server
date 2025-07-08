@@ -9,6 +9,4 @@ const terminologySchema = new Schema({
   autoIndex: false,
 })
 
-// TODO: Maybe remove "Terminology"
-export const Terminology = mongoose.model("Terminology", terminologySchema)
-export const Scheme = Terminology
+export const Scheme = mongoose.model("Terminology", terminologySchema)

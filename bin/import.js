@@ -196,7 +196,7 @@ import _ from "lodash"
 import * as utils from "../utils/index.js"
 import * as db from "../utils/db.js"
 
-import { byType as services } from "../services/index.js"
+import { services } from "../services/index.js"
 
 // Also import models for Mapping and Concordance
 // TODO: This won't be needed if these are imported through the service as well.

@@ -3,7 +3,7 @@ import { Concept } from "./concepts.js"
 import { Concordance } from "./concordances.js"
 import { Mapping } from "./mappings.js"
 import { Meta } from "./meta.js"
-import { Terminology, Scheme } from "./schemes.js"
+import { Scheme } from "./schemes.js"
 
 export {
   Annotation,
@@ -11,11 +11,10 @@ export {
   Concordance,
   Mapping,
   Meta,
-  Terminology,
   Scheme,
 }
 
-export const byType = {
+export const models = {
   scheme: Scheme,
   concept: Concept,
   concordance: Concordance,
@@ -23,8 +22,8 @@ export const byType = {
   annotation: Annotation,
 }
 
-Object.keys(byType).forEach(type => {
-  Object.defineProperty(byType, `${type}s`, {
-    get: () => byType[type],
+Object.keys(models).forEach(type => {
+  Object.defineProperty(models, `${type}s`, {
+    get: () => models[type],
   })
 })

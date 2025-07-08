@@ -123,12 +123,10 @@ if (cli.flags.scheme && cli.flags.concordance) {
   })
 }
 
-import { byType as services } from "../services/index.js"
-import { byType as models } from "../models/index.js"
+import { services } from "../services/index.js"
+import { models } from "../models/index.js"
 
-const allTypes = Object.keys(services)
-
-  ;
+;
 (async () => {
   // 1. Connect to database.
   try {
@@ -142,8 +140,8 @@ const allTypes = Object.keys(services)
   log("Connection to database established.")
   log()
 
-  // 2. Figure out what will get deleted.
-  const types = type ? [type] : allTypes
+  // 2. Figure out what will get deleted (default: all types).
+  const types = type ? [type] : Object.keys(models)
   // Prepare scheme/concordance URIs
   let filterUris
   if (cli.flags.scheme) {

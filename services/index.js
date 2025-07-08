@@ -18,7 +18,7 @@ export {
   validateService,
 }
 
-export const byType = {
+export const services = {
   scheme: schemeService,
   concept: conceptService,
   concordance: concordanceService,
@@ -26,8 +26,8 @@ export const byType = {
   annotation: annotationService,
 }
 
-Object.keys(byType).forEach(type => {
-  Object.defineProperty(byType, `${type}s`, {
-    get: () => byType[type],
+for (let type of Object.keys(services)) {
+  Object.defineProperty(services, `${type}s`, {
+    get: () => services[type],
   })
-})
+}
