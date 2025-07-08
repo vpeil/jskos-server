@@ -87,13 +87,13 @@ JSKOS Server implements the JSKOS API web service and storage for [JSKOS] data s
 ### Requirements
 You need Node.js 18 or Node.js 20 (recommended) and access to a [MongoDB database](https://docs.mongodb.com/manual/installation/) (minimun v4; v6 or v7 recommended).
 
-To enable optional [Change Stream endpoints](change-stream-endpoints) the MongoDB database must be configured as a replica set. When using Docker please refer to [our Docker documentation](docker/README.md) for instructions on setting up a replica set. For a non‐Docker setup, start `mongod` with the `--replSet` flag, then once connect with the [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) and execute:
+To enable optional [Change Stream endpoints](#change-stream-endpoints) the MongoDB database must be configured as a replica set. When using Docker please refer to [our Docker documentation](docker/README.md) for instructions on setting up a replica set. For a non‐Docker setup, start `mongod` with the `--replSet` flag, then once connect with the [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) and execute:
 
 ```js
 rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] });
 ```
 
-If the replica set is initialized, JSKOS Server will detect it at startup (the `replSetGetStatus` command is retried up to `changesApi.rsMaxRetries` times). If Change Streams [are configured](change-streams-configuration) but no replica set was detected, JSKOS Server will log an error during startup but continue running with Change Streams disabled.
+If the replica set is initialized, JSKOS Server will detect it at startup (the `replSetGetStatus` command is retried up to `changesApi.rsMaxRetries` times). If Change Streams [are configured](#change-streams-configuration) but no replica set was detected, JSKOS Server will log an error during startup but continue running with Change Streams disabled.
 
 ### Docker
 The easiest way to install and use JSKOS Server as stand-alone application is with Docker and Docker Compose. Please refer to [our Docker documentation](docker/README.md) for more information and instructions.
@@ -461,9 +461,7 @@ It is possible to limit certain actions to authenticated users, indicated by the
 }
 ```
 
-The JWT has to be provided as a Bearer token in the authorization header, e.g. `Authorization: Bearer <token>`. Currently, all authorized endpoints will be accessible (although `PUT`/`PATCH`/`DELETE` are limited to the user who created the object by default), but later it will be possible to set scopes for certain users (see [#47](https://github.com/gbv/jskos-server/issues/47)).
-
-The authentication is designed to be used together with an instance of [login-server], but it is also possible to use your own JWTs.
+The JWT has to be provided as a Bearer token in the authorization header, e.g. `Authorization: Bearer <token>`. The authentication is designed to be used together with an instance of [login-server], but it is also possible to use your own JWTs.
 
 #### JWT Example
 The recommended Node.js library for creating JWTs is [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken). Note that for simplicity, we are using the HS256 algorithm which is symmetrical. In most cases, it would be better to use RS256 with a libarary like [node-rsa](https://github.com/rzcoder/node-rsa) instead.
