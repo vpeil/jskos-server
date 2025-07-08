@@ -13,8 +13,8 @@ JSKOS Server implements the JSKOS API web service and storage for [JSKOS] data s
 
 ## Table of Contents <!-- omit in toc -->
 - [Install](#install)
+  - [Requirements](#requirements)
   - [Docker](#docker)
-  - [Dependencies](#dependencies)
   - [Clone and Install](#clone-and-install)
   - [Configuration](#configuration)
   - [Access control](#access-control)
@@ -70,7 +70,7 @@ JSKOS Server implements the JSKOS API web service and storage for [JSKOS] data s
   - [PATCH /annotations/:\_id](#patch-annotations_id)
   - [DELETE /annotations/:\_id](#delete-annotations_id)
   - [Errors](#errors)
-  - [Real-time Change Stream Endpoints](#real-time-change-stream-endpoints)
+  - [Change Stream Endpoints](#change-stream-endpoints)
 - [Deployment](#deployment)
   - [Notes about depolyment on Ubuntu](#notes-about-depolyment-on-ubuntu)
   - [Update an instances deployed with PM2](#update-an-instances-deployed-with-pm2)
@@ -85,31 +85,19 @@ JSKOS Server implements the JSKOS API web service and storage for [JSKOS] data s
 
 ## Install
 
-### Docker
-The easiest way to install and use JSKOS Server is with Docker and Docker Compose. Please refer to [our Docker documentation](https://github.com/gbv/jskos-server/blob/master/docker/README.md) for more information and instructions.
+### Requirements
+You need Node.js 18 or Node.js 20 (recommended) and access to a [MongoDB database](https://docs.mongodb.com/manual/installation/) (minimun v4; v6 or v7 recommended).
 
-### Dependencies
-You need Node.js 18 or Node.js 20 (recommended) to run JSKOS Server. You need to have access to a [MongoDB database](https://docs.mongodb.com/manual/installation/) (minimun v4; v6 or v7 recommended).
-
-> **Change-Streams (WebSocket API) – Optional Feature**
-> JSKOS Server supports a /…/changes WebSocket API based on MongoDB Change Streams, which allows clients to receive live updates when data changes. This feature is **disabled by default**. To enable it, set `changesApi.enabled` to `true` in the configuration file.
-> If `changesApi.enabled` is `true` but MongoDB is `not` running as a replica set, JSKOS Server will log an error during startup and `skip registering` the Change-Streams endpoints — but the server `will continue running` normally for all other features.
-
-### Running MongoDB as a Replica Set
-> MongoDB must be configured as a **replica set** to support Change Streams. Standalone MongoDB deployments are not compatible.
-> To use the **Change-Streams** (`/changes`) WebSocket API, MongoDB **must** be configured as a **replica set**.
-If you want to use the Change-Streams API and you're using Docker, please refer to [our Docker documentation](https://github.com/gbv/jskos-server/blob/master/docker/README.md) for instructions on setting up a replica set.
-
-
-For a non‐Docker setup, start `mongod` with the `--replSet` flag, then connect with the shell and run:
+To enable optional [Change Stream endpoints](change-stream-endpoints) the MongoDB database must be configured as a replica set. When using Docker please refer to [our Docker documentation](docker/README.md) for instructions on setting up a replica set. For a non‐Docker setup, start `mongod` with the `--replSet` flag, then once connect with the [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) and execute:
 
 ```js
 rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] });
 ```
 
-Once the replica set is initialized, JSKOS Server will detect it at startup (the `replSetGetStatus` command is retried up to `changesApi.rsMaxRetries` times). 
+If the replica set is initialized, JSKOS Server will detect it at startup (the `replSetGetStatus` command is retried up to `changesApi.rsMaxRetries` times). If Change Streams [are configured](change-streams-configuration) but no replica set was detected, JSKOS Server will log an error during startup but continue running with Change Streams disabled.
 
-The [Change-Streams endpoints](#real-time-change-stream-endpoints) will only be registered if a replica set is confirmed.
+### Docker
+The easiest way to install and use JSKOS Server as stand-alone application is with Docker and Docker Compose. Please refer to [our Docker documentation](https://github.com/gbv/jskos-server/blob/master/docker/README.md) for more information and instructions.
 
 ### Clone and Install
 ```bash
@@ -254,21 +242,20 @@ Available actions for `schemes`, `concepts`, `mappings`, and `annotations` are `
 
 Note that any properties not mentioned here are not allowed!
 
-#### Change-Streams API Configuration
+#### Change Streams Configuration
 
 The `changesApi` section controls how JSKOS Server handles MongoDB Change Streams:
 
-- **`enableChangesApi`** (boolean, default `false`)  
+- **`enableChangesApi`** (boolean, default `false`)
   Globally turn all `/…/changes` WebSocket endpoints on or off. When `false`, no change-stream routes are registered.
 
-- **`rsMaxRetries`** (integer, default `20`)  
+- **`rsMaxRetries`** (integer, default `20`)
   How many times to retry the `replSetGetStatus` command while waiting for the replica set to initialise before giving up.
 
-- **`rsRetryInterval`** (integer, default `5000`)  
+- **`rsRetryInterval`** (integer, default `5000`)
   Milliseconds to wait between each retry attempt when checking replica-set status.
 
-Only once the replica set is confirmed will the `/…/changes` endpoints become active.
-
+Only once the replica set is confirmed will the `/…/changes` endpoints become active, unless MongoDB does is not running with replica set.
 
 #### Mapping Mismatch Tagging for Negative Assessment Annotations
 To differentiate why a mapping was annotated with a negative assessment, a mismatch tagging vocabulary can now be configured under `annotations.mismatchTagVocabulary`. In theory, any vocabulary can be used, but [our instance](https://coli-conc.gbv.de/api/) will use a very small "mismatch" vocabulary available in https://github.com/gbv/jskos-data/tree/master/mismatch.
@@ -2213,7 +2200,7 @@ Deletes an annotation from the database.
 
   Status 204, no content.
 
-### Real-time Change Stream Endpoints
+### Change Stream Endpoints
 
 JSKOS-Server provides WebSocket endpoints that push live notifications whenever data changes. Available routes:
 
@@ -2230,7 +2217,7 @@ JSKOS-Server provides WebSocket endpoints that push live notifications whenever 
 wscat -c ws://<host>:<port>/voc/changes
 ```
 
-## Messages
+#### Messages
 
 Each message is a JSON object with the following fields:
 
@@ -2273,11 +2260,6 @@ Each message is a JSON object with the following fields:
 ```
 
 </details>
-
-
-
-
-
 
 ### Errors
 If possible, errors will be returned as a JSON object in the following format (example):
