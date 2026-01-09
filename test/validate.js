@@ -33,18 +33,18 @@ for (let type of types) {
 describe("Validation endpoint testing", () => {
   before(async () => {
     const mongoUri = await setupInMemoryMongo({ replSet: false })
-    process.env.MONGO_URI = mongoUri  
+    process.env.MONGO_URI = mongoUri
     await createCollectionsAndIndexes()
   })
-        
+
   after(async () => {
     // close server if you started one
     await teardownInMemoryMongo()
   })
-        
+
   // 🗑 Drop DB before *and* after every single `it()` in this file
   dropDatabaseBeforeAndAfter()
-        
+
   // 🔌 Sanity‐check that mongoose really is connected
   assertMongoDB()
 
@@ -106,7 +106,7 @@ describe("Validation endpoint testing", () => {
     it("should fail validation for object with unknown parameter, but pass when `unknownFields` is set", done => {
       const object = { abcdef: 1 }
       chai.request.execute(server.app)
-        .post("/validate")
+        .post("/validate?type=concept")
         .send(object)
         .end((error, res) => {
           assert.equal(error, null)
