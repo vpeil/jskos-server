@@ -66,7 +66,7 @@ const wrappers = {
  * @param {number} [depth=0] Should not be set when called from outside
  */
 const cleanJSON = (json, depth = 0) => {
-  if (_.isArray(json)) {
+  if (Array.isArray(json)) {
     json.forEach(value => cleanJSON(value, depth))
   } else if (_.isObject(json)) {
     _.forOwn(json, (value, key) => {
@@ -108,13 +108,13 @@ adjust.data = async ({ req, data, type }) => {
   data = data ?? req.data
   type = type ?? req.type
   // If data is still a mongoose object, convert it to plain object
-  if (_.isArray(data) && data[0]?.toObject) {
+  if (Array.isArray(data) && data[0]?.toObject) {
     data = data.map(item => item.toObject ? item.toObject() : item)
-  } else if (!_.isArray(data) && data.toObject) {
+  } else if (!Array.isArray(data) && data.toObject) {
     data = data.toObject()
   }
   // Remove "s" from the end of type if it's not an array
-  if (!_.isArray(data)) {
+  if (!Array.isArray(data)) {
     type = type.substring(0, type.length - 1)
   }
   if (adjust[type]) {
@@ -341,7 +341,7 @@ const matchesCreator = ({ req = {}, object, withContributors = false }) => {
     return true
   }
   // Support arrays, objects, and strings as creators
-  let creators = _.isArray(object.creator) ? object.creator : (_.isObject(object.creator) ? [object.creator] : [{ uri: object.creator }])
+  let creators = Array.isArray(object.creator) ? object.creator : (_.isObject(object.creator) ? [object.creator] : [{ uri: object.creator }])
   // Also check contributors if requested
   let contributors = withContributors ? (object.contributor || []) : []
   for (let creator of creators.concat(contributors)) {
@@ -551,7 +551,7 @@ const addPaginationHeaders = (req, res, next) => {
 const returnJSON = (req, res) => {
   // Convert Mongoose documents into plain objects
   let data
-  if (_.isArray(req.data)) {
+  if (Array.isArray(req.data)) {
     data = req.data.map(doc => doc.toObject ? doc.toObject() : doc)
     // Preserve totalCount
     data.totalCount = req.data.totalCount
@@ -575,7 +575,7 @@ const handleDownload = (filename) => (req, res) => {
   let results = req.data, single = false
   // Convert to stream if necessary
   if (!(results instanceof Readable)) {
-    if (!_.isArray(results)) {
+    if (!Array.isArray(results)) {
       single = true
     }
     results = new Readable({ objectMode: true })

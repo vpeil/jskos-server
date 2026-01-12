@@ -11,7 +11,7 @@ import { EntityNotFoundError, DatabaseAccessError, InvalidBodyError, MalformedBo
 const validateAnnotation = async (data, options) => {
   // TODO: Due to an issue with lax schemas in jskos-validate (see https://github.com/gbv/jskos-validate/issues/17), we need a workaround here.
   const result = validate.annotation(_.omit(data, "body"), options)
-  if (!result || (data.body && !_.isArray(data.body))) {
+  if (!result || (data.body && !Array.isArray(data.body))) {
     throw new InvalidBodyError()
   }
   // Check `body` property

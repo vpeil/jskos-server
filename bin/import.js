@@ -260,7 +260,7 @@ async function doImport({ input, format, type, concordance }) {
       bulk: true,
       bulkReplace: !cli.flags.noreplace,
     })
-    log(`... done: ${_.isArray(result) ? result.length : 1} schemes imported.`)
+    log(`... done: ${Array.isArray(result) ? result.length : 1} schemes imported.`)
   } else if (type == "concept") {
     log("Importing concepts...")
     // TODO: Find way to output progress.
@@ -271,7 +271,7 @@ async function doImport({ input, format, type, concordance }) {
       scheme: cli.flags.scheme,
       setApi: cli.flags.setApi,
     })
-    log(`... done: ${_.isArray(result) ? result.length : 1} concepts imported.`)
+    log(`... done: ${Array.isArray(result) ? result.length : 1} concepts imported.`)
   } else if (type == "mapping") {
     // TODO: Eventually, this should also be done through the service.
     let mappings = []
@@ -423,6 +423,6 @@ async function doImport({ input, format, type, concordance }) {
       bulkReplace: !cli.flags.noreplace,
       admin: true,
     })
-    log(`... done: ${_.isArray(result) ? result.length : 1} annotations imported.`)
+    log(`... done: ${Array.isArray(result) ? result.length : 1} annotations imported.`)
   }
 }
