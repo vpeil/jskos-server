@@ -1,5 +1,3 @@
-/* eslint-env node, mocha */
-
 import chai from "./chai.js"
 
 import * as server from "../server.js"
@@ -140,18 +138,18 @@ describe("Configuration", () => {
 describe("Express Server", () => {
   before(async () => {
     const mongoUri = await setupInMemoryMongo({ replSet: false })
-    process.env.MONGO_URI = mongoUri 
+    process.env.MONGO_URI = mongoUri
     await createCollectionsAndIndexes()
   })
-      
+
   after(async () => {
     // close server if you started one
     await teardownInMemoryMongo()
   })
-      
+
   // 🗑 Drop DB before *and* after every single `it()` in this file
   dropDatabaseBeforeAndAfter()
-      
+
   // 🔌 Sanity‐check that mongoose really is connected
   assertMongoDB()
 

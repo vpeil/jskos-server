@@ -1,4 +1,3 @@
-/* eslint-env node, mocha */
 import { assertMongoDB, dropDatabaseBeforeAndAfter, setupInMemoryMongo, teardownInMemoryMongo, createCollectionsAndIndexes } from "./test-utils.js"
 import WebSocket from "ws"
 import assert from "assert"
@@ -54,18 +53,18 @@ describe("WebSocket Change‐Streams (integration)", function () {
     await createCollectionsAndIndexes()
     // optionally spin up your HTTP+WS server here
   })
-  
+
   after(async () => {
     // close server if you started one
     await teardownInMemoryMongo()
   })
-  
+
   // 🗑 Drop DB before *and* after every single `it()` in this file
   dropDatabaseBeforeAndAfter()
-  
+
   // 🔌 Sanity‐check that mongoose really is connected
   assertMongoDB()
-  
+
   // generate tests for each route
   for (const [route, info] of Object.entries(routes)) {
     lifecycleTests(route, info)
@@ -74,7 +73,7 @@ describe("WebSocket Change‐Streams (integration)", function () {
 })
 
 function lifecycleTests(route, { coll, type }) {
-  const uriBase = `urn:test:${route}`  
+  const uriBase = `urn:test:${route}`
   const typeUri  = objectTypes[type].type?.[0]
 
   describe(`${route}/changes`, () => {

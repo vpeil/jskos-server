@@ -8,5 +8,10 @@ export default [
       "docker/data/**",
     ],
   },
+  {
+    languageOptions: {
+      globals: { mocha: "readable" },
+    },
+  },
 ]
 

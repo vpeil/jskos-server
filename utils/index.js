@@ -383,26 +383,42 @@ const addDefaultHeaders = (req, res, next) => {
 /**
  * Middleware that adds default properties:
  *
- * - If req.query exists, make sure req.query.limit and req.query.offset are set as numbers.
+ * - If req.query exists, make sure req.query.limit and req.query.offset are set as numbers and make req.bulk a Boolean.
  * - If possible, set req.type depending on the endpoint (one of concepts, schemes, mappings, annotations, suggest).
  */
 const addMiddlewareProperties = (req, res, next) => {
+
   if (req.query) {
+    const query = {...req.query}
+
     // Limit for pagination
     const defaultLimit = 100
-    req.query.limit = parseInt(req.query.limit)
-    if (isNaN(req.query.limit) || req.query.limit <= 0) {
-      req.query.limit = defaultLimit
+    query.limit = parseInt(req.query.limit)
+    if (isNaN(query.limit) || req.query.limit <= 0) {
+      query.limit = defaultLimit
     }
     // Offset for pagination
     const defaultOffset = 0
-    req.query.offset = parseInt(req.query.offset)
-    if (isNaN(req.query.offset) || req.query.offset < 0) {
-      req.query.offset = defaultOffset
+    query.offset = parseInt(req.query.offset)
+    if (isNaN(query.offset) || req.query.offset < 0) {
+      query.offset = defaultOffset
     }
     // Bulk option for POST endpoints
-    req.query.bulk = req.query.bulk === "true" || req.query.bulk === "1"
+    query.bulk = query.bulk === "true" || query.bulk === "1"
+
+    // req.query is read-only since Express 5, so this is a hack.
+    // better create a custom query parser instead
+    // See <https://stackoverflow.com/questions/79597051/is-there-any-way-to-modify-req-query-in-express-v5>
+    Object.defineProperty(
+      req,
+      "query",
+      {
+        ...Object.getOwnPropertyDescriptor(req, "query"),
+        writable: false,
+        value: query,
+      })
   }
+
   // req.path -> req.type
   let type = req.path.substring(1)
   type = type.substring(0, type.indexOf("/") == -1 ? type.length : type.indexOf("/") )
@@ -481,7 +497,8 @@ const supportDownloadFormats = (formats) => (req, res, next) => {
 const addPaginationHeaders = (req, res, next) => {
   const limit = req.query.limit
   const offset = req.query.offset
-  const total = _.get(req, "data.totalCount", req.data && req.data.length)
+  const total = req.data?.totalCount ?? req.data?.length ?? null
+
   if (req == null || res == null || limit == null || offset == null) {
     next()
     return
