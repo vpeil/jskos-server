@@ -85,7 +85,7 @@ JSKOS Server implements the JSKOS API web service and storage for [JSKOS] data s
 ## Install
 
 ### Requirements
-You need Node.js 18 or Node.js 20 (recommended) and access to a [MongoDB database](https://docs.mongodb.com/manual/installation/) (minimun v4; v6 or v7 recommended).
+You need Node.js 22 or higher and access to a [MongoDB database](https://docs.mongodb.com/manual/installation/) (minimun v4; v6 or v7 recommended).
 
 To enable optional [Change Stream endpoints](#change-stream-endpoints) the MongoDB database must be configured as a replica set. When using Docker please refer to [our Docker documentation](docker/README.md) for instructions on setting up a replica set. For a non‐Docker setup, start `mongod` with the `--replSet` flag, then once connect with the [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/) and execute:
 
